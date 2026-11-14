@@ -1,1 +1,6 @@
 PROVAO.TXT
+ordena
+*.o
+*.d
+fita*.tmp
+.vscode/
