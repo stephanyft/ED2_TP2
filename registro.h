@@ -27,7 +27,7 @@ typedef struct {
 /*
  * Converte uma linha de texto (no formato do PROVAO.TXT) em registro.
  * Retorna 1 em sucesso, 0 se a linha for curta demais ou mal formada.
- * Nao conta leitura: quem leu a linha e que contabiliza.
+ * Nao conta leitura: quem leu a linha eh que contabiliza.
  */
 int registroDeLinha(const char *linha, Registro *r);
 
