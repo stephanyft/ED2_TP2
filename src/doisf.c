@@ -16,6 +16,7 @@ int metodoDoisFCaminhos(FILE *arq, int n, Estatisticas *est) {
     }
 
     ordenaBlocosIniciais(arq, n, f, est);
+    intercalaFitas(f);
     
 }
 
@@ -42,7 +43,9 @@ int ordenaBlocosIniciais(FILE *arq, int n, Fita* f[], Estatisticas *est) {
     constroiHeap(&h, qtdHeap);
 
     while (qtdHeap > 0) {
+        fitaIniciaBloco(f[fitaAtual]);
         escreveBloco(arq, f[fitaAtual], &h, &cont, &lidos, n, &qtdHeap, est);
+        fitaFinalizaBloco(f[fitaAtual]);
         fitaAtual = (fitaAtual + 1) % 10;
     }
 
@@ -53,8 +56,7 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
     Registro novo;
     Registro ultimo;
 
-    if (fimBloco(h, *qtdHeap))
-        novoBloco(h, *qtdHeap);
+    preparaHeap(h, *qtdHeap);
 
     while (*qtdHeap > 0) {
         if (fimBloco(h, *qtdHeap))
@@ -79,4 +81,8 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
         if (*qtdHeap > 0)
             reconstroiHeap(h, 0, *qtdHeap);
     }
+}
+
+int intercalaFitas(Fita* f[]) {
+    
 }
