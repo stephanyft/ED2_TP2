@@ -6,7 +6,7 @@
 #include "estatisticas.h"
 
 /*
- * Uma fita e um arquivo binario temporario com registros de tamanho fixo,
+ * Uma fita eh um arquivo binario temporario com registros de tamanho fixo,
  * organizado em BLOCOS (corridas ordenadas). A fita guarda o tamanho de
  * cada bloco em um vetor, de modo que o leitor sempre sabe onde um bloco
  * termina e o proximo comeca, sem depender de comparacao de chaves.
@@ -30,7 +30,7 @@
  * Toda fitaEscreve conta uma escrita e toda fitaLe conta uma leitura
  * em est (se est != NULL).
  */
-typedef struct _fita {
+typedef struct {
     FILE *arq;
     char nome[32];       /* nome do arquivo temporario em disco */
     int indice;
