@@ -9,19 +9,20 @@
 typedef struct {
     Registro reg;
     bool marcado;
+    int fitaOrigem;
 }ItemHeap;
 
 typedef struct {
-    ItemHeap v[10]
+    ItemHeap v[TAM_HEAP];
 }Heap;
 
-int menor(ItemHeap a, ItemHeap b);
+int menor(ItemHeap a, ItemHeap b, Estatisticas* est);
 bool fimBloco(Heap *h, int n);
-void preparaHeap(Heap *h, int n);
-void novoBloco(Heap *h, int n);
-void constroiHeap(Heap *h, int n);
-void substituiRaiz(Heap *h, Registro r, Registro ultimo, int n);
-void reconstroiHeap(Heap *h, int i, int n);
+void preparaHeap(Heap *h, int n, Estatisticas* est);
+void novoBloco(Heap *h, int n, Estatisticas* est);
+void constroiHeap(Heap *h, int n, Estatisticas* est);
+void substituiRaiz(Heap *h, Registro r, Registro ultimo, int n, Estatisticas* est);
+void reconstroiHeap(Heap *h, int i, int n, Estatisticas* est);
 
 
 #endif //SUBSELECAO_H

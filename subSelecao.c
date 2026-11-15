@@ -1,6 +1,8 @@
 #include "subSelecao.h"
 
-int menor(ItemHeap a, ItemHeap b) {
+int menor(ItemHeap a, ItemHeap b, Estatisticas* est) {
+    est->comparacoes++;
+
     if (a.marcado != b.marcado)
         return a.marcado < b.marcado;
 
@@ -16,42 +18,42 @@ bool fimBloco(Heap *h, int n) {
     return true;
 }
 
-void preparaHeap(Heap *h, int n) {
+void preparaHeap(Heap *h, int n, Estatisticas* est) {
     if (fimBloco(h, n)) {
-        novoBloco(h, n);
+        novoBloco(h, n, est);
     }
 }
 
-void novoBloco(Heap *h, int n) {
+void novoBloco(Heap *h, int n, Estatisticas* est) {
     for (int i = 0; i < n; i++) {
         h->v[i].marcado = false;
     }
 
-    constroiHeap(h, n);
+    constroiHeap(h, n, est);
 }
 
-void constroiHeap(Heap *h, int n) {
+void constroiHeap(Heap *h, int n, Estatisticas* est) {
     for (int i = n / 2 - 1; i >= 0; i--) {
-        reconstroiHeap(h, i, n);
+        reconstroiHeap(h, i, n, est);
     }
 }
 
-void substituiRaiz(Heap *h, Registro r, Registro ultimo, int n) {
+void substituiRaiz(Heap *h, Registro r, Registro ultimo, int n, Estatisticas* est) {
     h->v[0].reg = r;
     h->v[0].marcado = (r.nota < ultimo.nota);
 
-    reconstroiHeap(h, 0, n);
+    reconstroiHeap(h, 0, n, est);
 }
 
-void reconstroiHeap(Heap *h, int i, int n) {
+void reconstroiHeap(Heap *h, int i, int n, Estatisticas* est) {
     int menorIndice = i;
     int esq = 2 * i + 1;
     int dir = 2 * i + 2;
 
-    if (esq < n && menor(h->v[esq], h->v[menorIndice]))
+    if (esq < n && menor(h->v[esq], h->v[menorIndice], est))
         menorIndice = esq;
 
-    if (dir < n && menor(h->v[dir], h->v[menorIndice]))
+    if (dir < n && menor(h->v[dir], h->v[menorIndice], est))
         menorIndice = dir;
 
     if (menorIndice != i) {
@@ -59,6 +61,6 @@ void reconstroiHeap(Heap *h, int i, int n) {
         h->v[i] = h->v[menorIndice];
         h->v[menorIndice] = aux;
 
-        reconstroiHeap(h, menorIndice, n);
+        reconstroiHeap(h, menorIndice, n, est);
     }
 }
