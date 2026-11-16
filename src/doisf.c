@@ -31,7 +31,7 @@ int ordenaBlocosIniciais(FILE *arq, int n, Fita* f[], Estatisticas *est) {
     int qtdHeap = 0;
     int fitaAtual = 0;
 
-    while (qtdHeap < 10 && lidos < n && fread(&reg, sizeof(Registro), 1, arq) == 1) {
+    while (qtdHeap < 10 && lidos < n && registroLeTexto(arq, &reg, est) == 1) {
 
         h.v[qtdHeap].reg = reg;
         h.v[qtdHeap].marcado = false;
@@ -40,7 +40,7 @@ int ordenaBlocosIniciais(FILE *arq, int n, Fita* f[], Estatisticas *est) {
         lidos++;
     }
 
-    constroiHeap(&h, qtdHeap);
+    constroiHeap(&h, qtdHeap, est);
 
     while (qtdHeap > 0) {
         fitaIniciaBloco(f[fitaAtual]);
@@ -56,7 +56,7 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
     Registro novo;
     Registro ultimo;
 
-    preparaHeap(h, *qtdHeap);
+    preparaHeap(h, *qtdHeap, est);
 
     while (*qtdHeap > 0) {
         if (fimBloco(h, *qtdHeap))
@@ -79,7 +79,7 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
         }
 
         if (*qtdHeap > 0)
-            reconstroiHeap(h, 0, *qtdHeap);
+            reconstroiHeap(h, 0, *qtdHeap, est);
     }
 }
 
