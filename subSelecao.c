@@ -1,11 +1,11 @@
 #include "subSelecao.h"
 
 int menor(ItemHeap a, ItemHeap b, Estatisticas* est) {
-    est->comparacoes++;
-
+    
     if (a.marcado != b.marcado)
-        return a.marcado < b.marcado;
-
+    return a.marcado < b.marcado;
+    
+    est->comparacoes++;
     return a.reg.nota < b.reg.nota;
 }
 
@@ -40,7 +40,7 @@ void constroiHeap(Heap *h, int n, Estatisticas* est) {
 
 void substituiRaiz(Heap *h, Registro r, Registro ultimo, int n, Estatisticas* est) {
     h->v[0].reg = r;
-    h->v[0].marcado = (r.nota < ultimo.nota);
+    h->v[0].marcado = comparaNota(est, &r, &ultimo) < 0 ? true : false;
 
     reconstroiHeap(h, 0, n, est);
 }

@@ -1,4 +1,5 @@
 #include "../includes/doisf.h"
+#include "subSelecao.h"
 
 int metodoDoisFCaminhos(FILE *arq, int n, Estatisticas *est) {
     if(arq == NULL)
@@ -18,6 +19,7 @@ int metodoDoisFCaminhos(FILE *arq, int n, Estatisticas *est) {
     ordenaBlocosIniciais(arq, n, f, est);
     intercalaFitas(f);
     
+    return 1;
 }
 
 int ordenaBlocosIniciais(FILE *arq, int n, Fita* f[], Estatisticas *est) {
@@ -62,16 +64,17 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
         if (fimBloco(h, *qtdHeap))
             break;
 
-        ultimo = h->v[0].reg;
+        h->v[0].fitaOrigem = f->indice;
+        ultimo = h->v[0].reg;        
 
         fitaEscreve(f, &ultimo, est);
         (*cont)++;
 
-        if ((*lidos) < n && fread(&novo, sizeof(Registro), 1, arq) == 1) {
+        if ((*lidos) < n && registroLeTexto(arq, &novo, est) == 1) {
             (*lidos)++;
 
             h->v[0].reg = novo;
-            h->v[0].marcado = (novo.nota < ultimo.nota);
+            h->v[0].marcado = comparaNota(est, &novo, &ultimo) < 0 ? true : false;
         } 
         else {
             h->v[0] = h->v[*qtdHeap - 1];
@@ -84,5 +87,5 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
 }
 
 int intercalaFitas(Fita* f[]) {
-    
+    return 1;   
 }
