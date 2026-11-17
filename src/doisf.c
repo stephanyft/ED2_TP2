@@ -24,7 +24,7 @@ int metodoDoisFCaminhos(FILE *arq, int n, Estatisticas *est) {
         }
         printf("Quantidade de blocos na fita %d: %ld\n", i, f[i]->numBlocos);
     }
-    intercalaFitas(f, est);
+    intercalaFitas(f, est, n);
     
     return 1;
 }
@@ -93,7 +93,16 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
     }
 }
 
-int intercalaFitas(Fita* f[], Estatisticas* est) {
+bool verificaSeTemItens(Fita* f[]) {
+    for(int i = 0; i < 20; i++) {
+        if(!fitaTemBloco(f[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
     if(f == NULL) {
         printf("erro na função intercalaFitas\n");
         return -1;
@@ -110,17 +119,54 @@ int intercalaFitas(Fita* f[], Estatisticas* est) {
         fitaReinicia(f[j]);
     }
 
+    int fitaSaidaAtual = 0;
+    int qtdHeap = 0;
+    int itensLidos = 0;
+
+    printf("Linha 117\n");
     for(int k = 0; k < 10; k++) {
+        printf("Linha 119\n");
+
         if(fitaTemBloco(f[k]) == 1) {
+            printf("Linha 122\n");
+
             if(fitaLe(f[k], &r, est) == 1) {
+                qtdHeap++;
                 h.v[k].reg = r;
                 h.v[k].fitaOrigem = k;
                 h.v[k].marcado = false;
+                itensLidos++;
             } 
         }
     }
 
     constroiHeap(&h, TAM_HEAP, est);
+    printf("Linha 135\n");
 
+    while(verificaSeTemItens(f)) {
+        printf("Linha 139\n");
+        fitaSaidaAtual = (fitaSaidaAtual + 1) % 10 + 10;
+        fitaIniciaBloco(f[fitaSaidaAtual - 1]);
+        
+        while(qtdHeap > 0) {
+            printf("Linha 144\n");
+            fitaEscreve(f[fitaSaidaAtual-1], &(h.v[0].reg), est);
+            int resultLeitura = fitaLe(f[h.v[0].fitaOrigem], &r, est);
+        
+            if(!resultLeitura) {
+                printf("Linha 149\n");
+                h.v[0] = h.v[qtdHeap];
+                qtdHeap--;
+                reconstroiHeap(&h, 0, qtdHeap, est);
+                continue;
+            }
+        
+            substituiRaiz(&h, r, h.v[0].reg, qtdHeap, est);
+            itensLidos++;
+        }
 
+        fitaFinalizaBloco(f[fitaSaidaAtual - 1]);
+        fitaSaidaAtual++;
+
+    }
 }
