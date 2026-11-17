@@ -24,8 +24,13 @@ int metodoDoisFCaminhos(FILE *arq, int n, Estatisticas *est) {
         }
         printf("Quantidade de blocos na fita %d: %ld\n", i, f[i]->numBlocos);
     }
-    intercalaFitas(f, est, n);
+    int num = intercalaFitas(f, est);
     
+    for (int i = 0; i < 20; i++) {
+        fitaFecha(f[i]);
+        free(f[i]);
+    }
+
     return 1;
 }
 
@@ -114,7 +119,7 @@ bool ultimoBloco(Fita* f[], int inicioSaida) {
     return true;
 }
 
-int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
+int intercalaFitas(Fita* f[], Estatisticas* est) {
     if(f == NULL) {
         printf("erro na função intercalaFitas\n");
         return -1;
@@ -127,7 +132,7 @@ int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
     for(int i = 0; i < 10; i++) {
         fitaRebobina(f[i]);
     }
-    
+
     for(int j = 10; j < 20; j++) {
         fitaReinicia(f[j]);
     }
@@ -176,14 +181,26 @@ int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
             }
             
         }
-        if(ultimoBloco(f, inicioSaida)) {
-            break;
+
+        if (ultimoBloco(f, inicioSaida)) {
+            for (int i = inicioSaida; i < inicioSaida + 10; i++)
+                if (fitaTemBloco(f[i])) { 
+                    fitaRebobina(f[i]); 
+                    return i;
+                }
         }
+
         for(int i = inicioSaida; i < (inicioSaida + 10); i++) {
             fitaRebobina(f[i]);
         }
+        for (int i = inicioEntrada; i < inicioEntrada + 10; i++) {
+            fitaReinicia(f[i]);
+        }
+
         int temp = inicioEntrada;
         inicioEntrada = inicioSaida;
         inicioSaida = temp;
     }
+
+    return 1;
 }
