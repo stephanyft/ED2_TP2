@@ -93,13 +93,25 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
     }
 }
 
-bool verificaSeTemItens(Fita* f[]) {
+bool verificaSeTemBloco(Fita* f[]) {
     for(int i = 0; i < 10; i++) {
         if(fitaTemBloco(f[i])) {
             return true;
         }
     }
     return false;
+}
+
+bool ultimoBloco(Fita* f[], int inicioSaida) {
+    int cont = 0;
+    for(int i = inicioSaida; i < (inicioSaida + 10); i++) {
+        if(fitaTemBloco(f[i])) {
+            cont++;
+        }
+    }
+    if(cont != 1)
+        return false;
+    return true;
 }
 
 int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
@@ -110,6 +122,7 @@ int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
 
     Heap h;
     Registro r;
+    int inicioEntrada = 0, inicioSaida = 10;
 
     for(int i = 0; i < 10; i++) {
         fitaRebobina(f[i]);
@@ -122,44 +135,50 @@ int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
     int fitaSaidaAtual = 0;
     int qtdHeap = 0;
     int itensLidos = 0;
-    
-    while(verificaSeTemItens(f)) {
-        for(int k = 0; k < 10; k++) {
-    
-            if(fitaTemBloco(f[k]) == 1) {
-                if(fitaLe(f[k], &r, est) == 1) {
-                    h.v[qtdHeap].reg = r;
-                    h.v[qtdHeap].fitaOrigem = k;
-                    h.v[qtdHeap].marcado = false;
-                    qtdHeap++;
-                    itensLidos++;
-                } 
+    while(1) {
+        while(verificaSeTemBloco(f)) {
+            for(int k = inicioEntrada; k < (inicioEntrada + 10); k++) {
+                if(fitaTemBloco(f[k]) == 1) {
+                    if(fitaLe(f[k], &r, est) == 1) {
+                        h.v[qtdHeap].reg = r;
+                        h.v[qtdHeap].fitaOrigem = k;
+                        h.v[qtdHeap].marcado = false;
+                        qtdHeap++;
+                        itensLidos++;
+                    } 
+                }
             }
-        }
-        constroiHeap(&h, qtdHeap, est);
-
-        fitaSaidaAtual = (fitaSaidaAtual + 1) % 10 + 10;
-        fitaIniciaBloco(f[fitaSaidaAtual]);
-        
-        while(qtdHeap > 0) {
-            fitaEscreve(f[fitaSaidaAtual], &(h.v[0].reg), est);
-            int resultLeitura = fitaLe(f[h.v[0].fitaOrigem], &r, est);
-        
-            if(!resultLeitura) {
-                h.v[0] = h.v[qtdHeap-1];
-                qtdHeap--;
-                reconstroiHeap(&h, 0, qtdHeap, est);
-                continue;
+            constroiHeap(&h, qtdHeap, est);
+    
+            fitaSaidaAtual = (fitaSaidaAtual + 1) % 10 + 10;
+            fitaIniciaBloco(f[fitaSaidaAtual]);
+            
+            while(qtdHeap > 0) {
+                fitaEscreve(f[fitaSaidaAtual], &(h.v[0].reg), est);
+                int resultLeitura = fitaLe(f[h.v[0].fitaOrigem], &r, est);
+            
+                if(!resultLeitura) {
+                    h.v[0] = h.v[qtdHeap-1];
+                    qtdHeap--;
+                    reconstroiHeap(&h, 0, qtdHeap, est);
+                    continue;
+                }
+            
+                substituiRaiz(&h, r, h.v[0].reg, qtdHeap, est);
+                itensLidos++;
             }
-        
-            substituiRaiz(&h, r, h.v[0].reg, qtdHeap, est);
-            itensLidos++;
+    
+            fitaFinalizaBloco(f[fitaSaidaAtual]);
+            for(int l = 0; l < 10; l++) {
+                fitaProximoBloco(f[l]);
+            }
+    
         }
-
-        fitaFinalizaBloco(f[fitaSaidaAtual]);
-        for(int l = 0; l < 10; l++) {
-            fitaProximoBloco(f[l]);
+        if(ultimoBloco(f, inicioSaida)) {
+            break;
         }
-
+        int temp = inicioEntrada;
+        inicioEntrada = inicioSaida;
+        inicioSaida = temp;
     }
 }
