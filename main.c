@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 
     switch(metodo) {
         case 1:
-            metodoDoisFCaminhos(arq, quantidade, &est);
+            metodoDoisFCaminhos(arq, quantidade, imprimir, &est);
             break;
         case 2:
             printf("Metodo 2 ainda nao implemtnado\n");

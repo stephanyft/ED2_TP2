@@ -1,7 +1,7 @@
 #include "../includes/doisf.h"
 #include "subSelecao.h"
 
-int metodoDoisFCaminhos(FILE *arq, int n, Estatisticas *est) {
+int metodoDoisFCaminhos(FILE *arq, int n, int imprimir, Estatisticas *est) {
     if(arq == NULL)
         return 0;
     
@@ -16,16 +16,43 @@ int metodoDoisFCaminhos(FILE *arq, int n, Estatisticas *est) {
         fitaAbre(f[i], i + 1);
     }
 
+    if (imprimir) {
+        Registro tmp;
+        printf("\n===== Dados antes de ordenar =====\n\n");
+        fseek(arq, 0, SEEK_SET);
+        for (int i = 0; i < n && registroLeTexto(arq, &tmp, NULL); i++)
+            registroImprime(&tmp);
+        printf("\n==================================\n");
+        fseek(arq, 0, SEEK_SET);
+    }
+
     ordenaBlocosIniciais(arq, n, f, est);
 
-    for(int i = 0; i < 20; i++) {
-        for(int j = 0; j < f[i]->numBlocos; j++) {
-            printf("Quantidade de registros na fita %d: %ld\n", i, f[i]->tamBlocos[j]);
-        }
-        printf("Quantidade de blocos na fita %d: %ld\n", i, f[i]->numBlocos);
-    }
     int num = intercalaFitas(f, est);
     
+    if (num < 0) {
+        return 0;
+    }
+
+    if(imprimir) {
+        printf("\n===== Dados depois de ordenar =====\n\n");
+        fitaImprime(f[num]);
+        printf("\n==================================\n");
+    }
+    
+    Registro r;
+    FILE *arq2 = fopen("ordenado", "wb");
+    if(arq2 == NULL) {
+        printf("\nFalha ao criar arquivo ordenado!\n");
+    }
+    else {
+        fitaRebobina(f[num]);
+        while (fitaLe(f[num], &r, NULL)) {
+            registroEscreveTexto(arq2, &r, est);
+        }
+        fclose(arq2);
+    }
+
     for (int i = 0; i < 20; i++) {
         fitaFecha(f[i]);
         free(f[i]);
@@ -137,7 +164,7 @@ int intercalaFitas(Fita* f[], Estatisticas* est) {
         fitaReinicia(f[j]);
     }
     
-    int fitaSaidaAtual = 0;
+    int fitaSaidaAtual = -1;
     int qtdHeap = 0;
     int itensLidos = 0;
     while(1) {
@@ -201,6 +228,4 @@ int intercalaFitas(Fita* f[], Estatisticas* est) {
         inicioEntrada = inicioSaida;
         inicioSaida = temp;
     }
-
-    return 1;
 }
