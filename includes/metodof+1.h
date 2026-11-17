@@ -22,7 +22,7 @@ typedef struct{
 
 void IntercalacaoFmais1(FILE *arqEntrada, int numRegistros, Estatisticas *est);
 
-HeapIntercalacao *heap;
+
 
 
 #endif
