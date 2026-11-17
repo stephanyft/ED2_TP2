@@ -3,8 +3,7 @@
 #include <float.h>
 
 // Grava os registros restantes do vetor pivo
-int gravaPivo(FILE *arq, Registro pivo[], int N,
-              long EscritaEsq, int *transfEscrita) {
+int gravaPivo(FILE *arq, Registro pivo[], int N,long EscritaEsq, int *transfEscrita) {
 
     for (int i = 0; i < N; i++) {
 
@@ -27,8 +26,7 @@ int gravaPivo(FILE *arq, Registro pivo[], int N,
 
 
 // Remove o maior registro do vetor pivo
-int removeMaiorPivo(FILE *arq, Registro pivo[], int *N,
-                    int *transfEscrita, long *EscritaDir,
+int removeMaiorPivo(FILE *arq, Registro pivo[], int *N, int *transfEscrita, long *EscritaDir,
                     float *Lsup) {
 
     if (*N <= 0) {
@@ -56,10 +54,7 @@ int removeMaiorPivo(FILE *arq, Registro pivo[], int *N,
 
 
 // Particionamento do arquivo
-int particiona(FILE *arq, long Esq, long Dir,
-               long *i, long *j,
-               int *transfLeitura, int *transfEscrita,
-               int *comp) {
+int particiona(FILE *arq, long Esq, long Dir, long *i, long *j,int *transfLeitura, int *transfEscrita, int *comp) {
 
     long LeituraEsq = Esq;
     long LeituraDir = Dir;
