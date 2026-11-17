@@ -17,7 +17,14 @@ int metodoDoisFCaminhos(FILE *arq, int n, Estatisticas *est) {
     }
 
     ordenaBlocosIniciais(arq, n, f, est);
-    intercalaFitas(f);
+
+    for(int i = 0; i < 20; i++) {
+        for(int j = 0; j < f[i]->numBlocos; j++) {
+            printf("Quantidade de registros na fita %d: %ld\n", i, f[i]->tamBlocos[j]);
+        }
+        printf("Quantidade de blocos na fita %d: %ld\n", i, f[i]->numBlocos);
+    }
+    intercalaFitas(f, est);
     
     return 1;
 }
@@ -86,6 +93,34 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
     }
 }
 
-int intercalaFitas(Fita* f[]) {
-    return 1;   
+int intercalaFitas(Fita* f[], Estatisticas* est) {
+    if(f == NULL) {
+        printf("erro na função intercalaFitas\n");
+        return -1;
+    }
+
+    Heap h;
+    Registro r;
+
+    for(int i = 0; i < 10; i++) {
+        fitaRebobina(f[i]);
+    }
+
+    for(int j = 10; j < 20; j++) {
+        fitaReinicia(f[j]);
+    }
+
+    for(int k = 0; k < 10; k++) {
+        if(fitaTemBloco(f[k]) == 1) {
+            if(fitaLe(f[k], &r, est) == 1) {
+                h.v[k].reg = r;
+                h.v[k].fitaOrigem = k;
+                h.v[k].marcado = false;
+            } 
+        }
+    }
+
+    constroiHeap(&h, TAM_HEAP, est);
+
+
 }
