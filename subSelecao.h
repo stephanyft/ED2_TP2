@@ -4,7 +4,7 @@
 #include "registro.h"
 #include <stdbool.h>
 
-#define TAM_HEAP 10
+#define TAM_HEAP 19
 
 typedef struct {
     Registro reg;

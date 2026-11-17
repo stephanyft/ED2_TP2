@@ -13,15 +13,19 @@
 typedef struct {
     Registro reg;
     int marcado;
-} NoHeapSubstituiçao;
+} ItemSubF1;
 
-typedef struct{
-    Registro reg;
-    int idFita;
-} NoHeapIntercalacao;
+typedef  struct {
+  ItemSubF1 v[19];
+  int tamanho;  
+} HeapSubF1;
 
-void IntercalacaoFmais1(FILE *arqEntrada, int numRegistros, Estatisticas *est);
-
+void metodoFMaisUmCaminhos(FILE *arq, int quantidade, Estatisticas *est);
+static int menorSubF1(ItemSubF1 a, ItemSubF1 b, Estatisticas *est);
+static void descerHeapSubF1(HeapSubF1 *h, int i, Estatisticas *est);
+static void construirHeapSubF1(HeapSubF1 *h, Estatisticas *est);
+static ItemSubF1 removerRaizSubF1(HeapSubF1 *h, Estatisticas *est);
+static void substituirRaizSubF1( HeapSubF1 * h, Registro novo, Registro ultimo, Estatisticas *est);
 
 
 
