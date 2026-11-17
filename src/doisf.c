@@ -94,12 +94,12 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
 }
 
 bool verificaSeTemItens(Fita* f[]) {
-    for(int i = 0; i < 20; i++) {
-        if(!fitaTemBloco(f[i])) {
-            return false;
+    for(int i = 0; i < 10; i++) {
+        if(fitaTemBloco(f[i])) {
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
@@ -122,40 +122,31 @@ int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
     int fitaSaidaAtual = 0;
     int qtdHeap = 0;
     int itensLidos = 0;
-
-    printf("Linha 117\n");
-    for(int k = 0; k < 10; k++) {
-        printf("Linha 119\n");
-
-        if(fitaTemBloco(f[k]) == 1) {
-            printf("Linha 122\n");
-
-            if(fitaLe(f[k], &r, est) == 1) {
-                qtdHeap++;
-                h.v[k].reg = r;
-                h.v[k].fitaOrigem = k;
-                h.v[k].marcado = false;
-                itensLidos++;
-            } 
-        }
-    }
-
-    constroiHeap(&h, TAM_HEAP, est);
-    printf("Linha 135\n");
-
+    
     while(verificaSeTemItens(f)) {
-        printf("Linha 139\n");
+        for(int k = 0; k < 10; k++) {
+    
+            if(fitaTemBloco(f[k]) == 1) {
+                if(fitaLe(f[k], &r, est) == 1) {
+                    h.v[qtdHeap].reg = r;
+                    h.v[qtdHeap].fitaOrigem = k;
+                    h.v[qtdHeap].marcado = false;
+                    qtdHeap++;
+                    itensLidos++;
+                } 
+            }
+        }
+        constroiHeap(&h, qtdHeap, est);
+
         fitaSaidaAtual = (fitaSaidaAtual + 1) % 10 + 10;
-        fitaIniciaBloco(f[fitaSaidaAtual - 1]);
+        fitaIniciaBloco(f[fitaSaidaAtual]);
         
         while(qtdHeap > 0) {
-            printf("Linha 144\n");
-            fitaEscreve(f[fitaSaidaAtual-1], &(h.v[0].reg), est);
+            fitaEscreve(f[fitaSaidaAtual], &(h.v[0].reg), est);
             int resultLeitura = fitaLe(f[h.v[0].fitaOrigem], &r, est);
         
             if(!resultLeitura) {
-                printf("Linha 149\n");
-                h.v[0] = h.v[qtdHeap];
+                h.v[0] = h.v[qtdHeap-1];
                 qtdHeap--;
                 reconstroiHeap(&h, 0, qtdHeap, est);
                 continue;
@@ -165,8 +156,10 @@ int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
             itensLidos++;
         }
 
-        fitaFinalizaBloco(f[fitaSaidaAtual - 1]);
-        fitaSaidaAtual++;
+        fitaFinalizaBloco(f[fitaSaidaAtual]);
+        for(int l = 0; l < 10; l++) {
+            fitaProximoBloco(f[l]);
+        }
 
     }
 }
