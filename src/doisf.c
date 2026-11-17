@@ -93,8 +93,8 @@ void escreveBloco(FILE *arq, Fita *f, Heap *h, int *cont, int *lidos, int n, int
     }
 }
 
-bool verificaSeTemBloco(Fita* f[]) {
-    for(int i = 0; i < 10; i++) {
+bool verificaSeTemBloco(Fita* f[], int inicioEntrada) {
+    for(int i = inicioEntrada; i < (inicioEntrada + 10); i++) {
         if(fitaTemBloco(f[i])) {
             return true;
         }
@@ -127,16 +127,16 @@ int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
     for(int i = 0; i < 10; i++) {
         fitaRebobina(f[i]);
     }
-
+    
     for(int j = 10; j < 20; j++) {
         fitaReinicia(f[j]);
     }
-
+    
     int fitaSaidaAtual = 0;
     int qtdHeap = 0;
     int itensLidos = 0;
     while(1) {
-        while(verificaSeTemBloco(f)) {
+        while(verificaSeTemBloco(f, inicioEntrada)) {
             for(int k = inicioEntrada; k < (inicioEntrada + 10); k++) {
                 if(fitaTemBloco(f[k]) == 1) {
                     if(fitaLe(f[k], &r, est) == 1) {
@@ -150,7 +150,9 @@ int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
             }
             constroiHeap(&h, qtdHeap, est);
     
-            fitaSaidaAtual = (fitaSaidaAtual + 1) % 10 + 10;
+            fitaSaidaAtual = (fitaSaidaAtual + 1) % 10;
+            if(inicioSaida == 10)
+                fitaSaidaAtual += 10;
             fitaIniciaBloco(f[fitaSaidaAtual]);
             
             while(qtdHeap > 0) {
@@ -163,19 +165,22 @@ int intercalaFitas(Fita* f[], Estatisticas* est, int n) {
                     reconstroiHeap(&h, 0, qtdHeap, est);
                     continue;
                 }
-            
+                
                 substituiRaiz(&h, r, h.v[0].reg, qtdHeap, est);
                 itensLidos++;
             }
-    
+            
             fitaFinalizaBloco(f[fitaSaidaAtual]);
-            for(int l = 0; l < 10; l++) {
+            for(int l = inicioEntrada; l < (inicioEntrada + 10); l++) {
                 fitaProximoBloco(f[l]);
             }
-    
+            
         }
         if(ultimoBloco(f, inicioSaida)) {
             break;
+        }
+        for(int i = inicioSaida; i < (inicioSaida + 10); i++) {
+            fitaRebobina(f[i]);
         }
         int temp = inicioEntrada;
         inicioEntrada = inicioSaida;
