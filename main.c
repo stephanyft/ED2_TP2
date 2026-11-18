@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "registro.h"
+#include "quicksort.h"
 
 int main(int argc, char *argv[]) {
     if(argc < 4 || argc > 5){
@@ -63,5 +63,8 @@ int main(int argc, char *argv[]) {
             metodoQuicksortExterno(arq, quantidade, imprimir, &est);
             break;
     }
+
+    estatisticasImprime(&est);
+
     return 0;
 }
