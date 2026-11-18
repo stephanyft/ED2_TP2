@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
             printf("Metodo 2 ainda nao implemtnado\n");
             break;
         case 3: 
-            printf("Metodo 3 ainda nao implemtnado\n");
+            metodoQuicksortExterno(arq, quantidade, imprimir, &est);
             break;
     }
     return 0;

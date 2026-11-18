@@ -207,3 +207,82 @@ void quicksort(FILE* arq, long n, Estatisticas* est){
 void quicksortRec(FILE* arq, long Esq, long Dir, Estatisticas* est){
 
 }
+
+int metodoQuicksortExterno(FILE* txt, int n, int imprimir, Estatisticas* est){
+    const char* nomeBin = "quicksort.bin";
+    const char* nomeSaida = "ordenado_quicksort.txt";
+    Registro r;
+    long k;
+    int ok = 1;
+
+    if (txt == NULL || n <= 0)
+        return 0;
+
+    FILE* bin = fopen(nomeBin, "w+b");
+    if (bin == NULL){
+        printf("Erro ao criar o arquivo binario temporario.\n");
+        return 0;
+    }
+
+    /* Impressão antes de ordenar (fora do tempo e das estatísticas) */
+    if (imprimir){
+        printf("\n===== Dados antes de ordenar =====\n\n");
+        fseek(txt, 0, SEEK_SET);
+        for (k = 0; k < n && registroLeTexto(txt, &r, NULL); k++)
+            registroImprime(&r);
+        printf("\n==================================\n");
+        fseek(txt, 0, SEEK_SET);
+    }
+
+    estatisticasIniciaTempo(est);
+
+    /* Etapa 1: texto -> binário (conta leitura do texto e escrita no binário) */
+    for (k = 0; k < n && ok; k++){
+        if (!registroLeTexto(txt, &r, est)){
+            printf("Erro: o arquivo possui menos de %d registros validos.\n", n);
+            ok = 0;
+        } else if (!escreveRegistro(bin, k, &r, est)){
+            ok = 0;
+        }
+    }
+
+    /* Etapa 2: ordenação */
+    if (ok){
+        quicksort(bin, n, est);
+        fflush(bin);
+    }
+
+    /* Etapa 3: binário ordenado -> arquivo texto de saída */
+    if (ok){
+        FILE* saida = fopen(nomeSaida, "wb");
+        if (saida == NULL){
+            printf("\nFalha ao criar arquivo ordenado!\n");
+            ok = 0;
+        } else {
+            for (k = 0; k < n; k++){
+                if (!leRegistro(bin, k, &r, est)){
+                    ok = 0;
+                    break;
+                }
+                registroEscreveTexto(saida, &r, est);
+            }
+            fclose(saida);
+        }
+    }
+
+    estatisticasParaTempo(est);
+
+    /* Impressão depois de ordenar (fora do tempo e das estatísticas) */
+    if (imprimir && ok){
+        printf("\n===== Dados depois de ordenar =====\n\n");
+        for (k = 0; k < n; k++){
+            if (leRegistro(bin, k, &r, NULL))
+                registroImprime(&r);
+        }
+        printf("\n==================================\n");
+    }
+
+    fclose(bin);
+    remove(nomeBin);
+    return ok;
+}
