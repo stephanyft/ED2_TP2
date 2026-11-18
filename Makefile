@@ -25,7 +25,7 @@ EXEC := ordena
 
 CFLAGS  := -I . -I ./includes -Wall -Wextra -std=c11 -D_POSIX_C_SOURCE=200809L -O2
 
-SRCS := $(wildcard *.c) $(wildcard src/doisf.c)
+SRCS := $(wildcard *.c) $(wildcard src/*.c)
 OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(notdir $(SRCS)))
 DEPS := $(patsubst %.c,$(DEP_DIR)/%.d,$(notdir $(SRCS)))
 vpath %.c src
