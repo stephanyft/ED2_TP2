@@ -6,21 +6,30 @@
 
 #define LIMITE_MEMORIA 10
 
+typedef struct {
+    long leituras;
+    long escritas;
+    long comparacoes;
+} Estatisticas;
 typedef struct{
-    long int inscrica[8];
-    float nota[5];
+    long int inscricao;
+    float nota;
     char estado[3];
     char cidade[51];
     char curso[31];
-}Item;
+}Registro;
 
+int leRegistro(FILE* arq, long r, Registro* reg, Estatisticas* est);
+int escreveRegistro(FILE* arq, long r, Registro* reg, Estatisticas* est);
 
-void inserePivo(FILE* arq, int *transEscrita, Item pivo[], int N, long EscritaEsq );
-int removeMaiorPivo(FILE* arq, Item pivo[], int* N, int *transEscrita, long* EscritaDir, float* Lsup);
-int gravaPivo(FILE* arq, Item pivo[], Int N, long EscritaEsq, int* transEscrita);
-int particiona(FILE* arq, long Esq, long Dir, int* i, long* j, int* transEscrita, int* transLeitura, int* comp);
-void quicksortRec(FILE* arq, long Esq, long Dir, int* transEscrita, int* transLeitura , int* comp);
-//Adicionar o resto das funções (stephany)
+void inserePivo(FILE* arq, Estatisticas* est, Registro pivo[], int* N, long* EscritaEsq, Registro reg);
+int removeMenorPivo(FILE* arq, Registro pivo[], int* N, Estatisticas* est, long* EscritaEsq, float* Linf);
+int removeMaiorPivo(FILE* arq, Registro pivo[], int* N, Estatisticas* est, long* EscritaDir, float* Lsup);
+int gravaPivo(FILE* arq, Registro pivo[], int N, long EscritaEsq, Estatisticas* est);
+
+void quicksort(FILE* arq, long n, Estatisticas* est);
+int particiona(FILE* arq, long Esq, long Dir, long* i, long* j, Estatisticas* est);
+void quicksortRec(FILE* arq, long Esq, long Dir, Estatisticas* est);
 
 
 #endif
