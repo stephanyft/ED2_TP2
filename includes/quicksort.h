@@ -11,7 +11,7 @@
 int leRegistro(FILE* arq, long r, Registro* reg, Estatisticas* est);
 int escreveRegistro(FILE* arq, long r, Registro* reg, Estatisticas* est);
 
-void inserePivo(FILE* arq, Estatisticas* est, Registro pivo[], int* N, long* EscritaEsq, Registro reg);
+void inserePivo(Estatisticas* est, Registro pivo[], int* N, Registro reg);
 int removeMenorPivo(FILE* arq, Registro pivo[], int* N, Estatisticas* est, long* EscritaEsq, float* Linf);
 int removeMaiorPivo(FILE* arq, Registro pivo[], int* N, Estatisticas* est, long* EscritaDir, float* Lsup);
 int gravaPivo(FILE* arq, Registro pivo[], int N, long EscritaEsq, Estatisticas* est);

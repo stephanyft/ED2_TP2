@@ -37,7 +37,7 @@ int escreveRegistro(FILE* arq, long r, Registro* reg, Estatisticas* est){
     return 1;
 }
 
-void inserePivo(FILE* arq, Estatisticas* est, Registro pivo[], int* N, long* EscritaEsq, Registro reg){
+void inserePivo(Estatisticas* est, Registro pivo[], int* N, Registro reg){
     int k = *N - 1;
 
     while (k >= 0){
@@ -155,7 +155,7 @@ int particiona(FILE* arq, long Esq, long Dir, long* i, long* j, Estatisticas* es
         }
 
         lerSuperior = !lerSuperior;
-        inserePivo(arq, est, pivo, &N, &EscritaEsq, lido);
+        inserePivo(est, pivo, &N, lido);
     }
 
     // Processa o restante
@@ -189,13 +189,13 @@ int particiona(FILE* arq, long Esq, long Dir, long* i, long* j, Estatisticas* es
                 EscritaEsq++;
 
             }else{
-                inserePivo(arq, est, pivo, &N, &EscritaEsq, lido);
+                inserePivo(est, pivo, &N, lido);
 
-                if( N== LIMITE_MEMORIA){
-                    long t1 = EscritaEsq - Esq;
-                    long t2 = Dir - EscritaDir;
+                
+                long t1 = EscritaEsq - Esq;
+                long t2 = Dir - EscritaDir;
                     
-                }
+                
                 if (t1 < t2)
                     removeMenorPivo(arq, pivo, &N, est, &EscritaEsq, &Linf);
                 else
