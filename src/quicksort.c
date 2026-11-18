@@ -160,10 +160,11 @@ int particiona(FILE* arq, long Esq, long Dir, long* i, long* j, Estatisticas* es
 
     // Processa o restante
     while (LeituraEsq <= LeituraDir){
-        // evita sobrescrever registro ainda não lido
-        if (LeituraDir == EscritaDir)      lerSuperior = true;
-        else if (LeituraEsq == EscritaEsq) lerSuperior = false;
 
+        // evita sobrescrever registro ainda não lido
+        if (LeituraEsq == EscritaEsq) lerSuperior = false;
+        else if (LeituraDir == EscritaDir) lerSuperior = true;
+        
         if (lerSuperior){
             if (!leRegistro(arq, LeituraDir, &lido, est)) return 0;
             LeituraDir--;
@@ -175,17 +176,27 @@ int particiona(FILE* arq, long Esq, long Dir, long* i, long* j, Estatisticas* es
         lerSuperior = !lerSuperior;
 
         est->comparacoes++;
+
         if (lido.nota > Lsup){
             if (!escreveRegistro(arq, EscritaDir, &lido, est)) return 0;
             EscritaDir--;
         }else{
+            
             est->comparacoes++;
+
             if (lido.nota < Linf){
                 if (!escreveRegistro(arq, EscritaEsq, &lido, est)) return 0;
                 EscritaEsq++;
+
             }else{
                 inserePivo(arq, est, pivo, &N, &EscritaEsq, lido);
-                if (EscritaEsq - Esq < Dir - EscritaDir)
+
+                if( N== LIMITE_MEMORIA){
+                    long t1 = EscritaEsq - Esq;
+                    long t2 = Dir - EscritaDir;
+                    
+                }
+                if (t1 < t2)
                     removeMenorPivo(arq, pivo, &N, est, &EscritaEsq, &Linf);
                 else
                     removeMaiorPivo(arq, pivo, &N, est, &EscritaDir, &Lsup);
@@ -201,10 +212,36 @@ int particiona(FILE* arq, long Esq, long Dir, long* i, long* j, Estatisticas* es
 }
 
 void quicksort(FILE* arq, long n, Estatisticas* est){
+      // Verifica se o arquivo é válido
+    if (arq == NULL) {
+        printf("Erro: arquivo invalido.\n");
+        return;
+    }
+    //Verifica se existem resgistros para ordenar 
+    if(n<= 1) return;
+
     quicksortRec(arq, 0, n - 1, est);
 }
 
 void quicksortRec(FILE* arq, long Esq, long Dir, Estatisticas* est){
+    if( Esq >= Dir) return; //Condição de parada 
+    long i, j; // Limites finais das regiões esquerda e direita
+    if((particiona(arq, Esq, Dir, &i, &j, est)) != 1) return;
+
+    if(i - Esq < Dir- j){
+        //Primeiro ordena a esquerda
+        quicksortRec(arq, Esq, i, est);
+        //Depois ordena a direita
+        quicksortRec(arq, j, Dir, est);
+    }
+    else{
+        //primeiro ordena a direita
+        quicksortRec(arq, j, Dir, est);
+
+        //Depois ordena a esquerda
+        quicksortRec(arq, Esq, i, est);
+    }
+
 
 }
 
