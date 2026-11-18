@@ -1,9 +1,10 @@
 #include "subSelecao.h"
 
 int menor(ItemHeap a, ItemHeap b, Estatisticas* est) {
-    
-    if (a.marcado != b.marcado)
-    return a.marcado < b.marcado;
+    if (a.marcado != b.marcado) {
+        est->comparacoes++;
+        return a.marcado < b.marcado;
+    }
     
     est->comparacoes++;
     return a.reg.nota < b.reg.nota;

@@ -25,10 +25,12 @@ int metodoDoisFCaminhos(FILE *arq, int n, int imprimir, Estatisticas *est) {
         printf("\n==================================\n");
         fseek(arq, 0, SEEK_SET);
     }
-
+    
+    estatisticasIniciaTempo(est);
     ordenaBlocosIniciais(arq, n, f, est);
 
     int num = intercalaFitas(f, est);
+    estatisticasParaTempo(est);
     
     if (num < 0) {
         return 0;
