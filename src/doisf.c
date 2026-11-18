@@ -48,7 +48,7 @@ int metodoDoisFCaminhos(FILE *arq, int n, int imprimir, Estatisticas *est) {
     
     //gera o arquivo com os dados ordenados
     Registro r;
-    FILE *arq2 = fopen("ordenado", "wb");
+    FILE *arq2 = fopen("ordenado_doisf.txt", "wb");
     if(arq2 == NULL) {
         printf("\nFalha ao criar arquivo ordenado!\n");
     }
