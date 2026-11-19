@@ -27,6 +27,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    if(quantidade <= 0 || quantidade > 471705) {
+        printf("Erro: quantidade deve estar entre 1 e 471705\n");
+        return 1;
+    }
+
     if(metodo < 1 || metodo > 3) {
         printf("Erro: metodo deve ser numerado de 1 a 3\n");
         return 1;
