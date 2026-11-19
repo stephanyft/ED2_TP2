@@ -12,7 +12,7 @@
 #define MEMORIA_F1 19
 
 
-void metodoFMaisUmCaminhos(FILE *arq, int quantidade, Estatisticas *est);
+void metodoFMaisUmCaminhos(FILE *arq, int quantidade, int imprimir, Estatisticas *est);
 void gerarBlocosFMaisUm(FILE *arq, Fita *fitas, int quantidade, Estatisticas *est);
 int intercalarFMaisUm(Fita *fitas, Estatisticas *est);
 void redistribuirFMaisUm(Fita *fitaSaida, Fita *fitasEntrada, Estatisticas *est);

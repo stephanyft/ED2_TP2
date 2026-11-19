@@ -175,7 +175,7 @@ int intercalarFMaisUm(Fita *fitas, Estatisticas *est) {
     }
 }
 
-void metodoFMaisUmCaminhos(FILE *arq, int quantidade, Estatisticas *est) {
+void metodoFMaisUmCaminhos(FILE *arq, int quantidade, int imprimir, Estatisticas *est) {
     if (arq == NULL) {
         fprintf(stderr, "Erro: arquivo de entrada nulo.\n");
         return;
@@ -184,6 +184,16 @@ void metodoFMaisUmCaminhos(FILE *arq, int quantidade, Estatisticas *est) {
     Fita fitas[NUM_FITAS_F1];
     for (int i = 0; i < NUM_FITAS_F1; i++) {
         fitaAbre(&fitas[i], i + 1);
+    }
+
+    if (imprimir) {
+        Registro tmp;
+        printf("\n===== Dados antes de ordenar =====\n\n");
+        fseek(arq, 0, SEEK_SET);
+        for (int i = 0; i < quantidade && registroLeTexto(arq, &tmp, NULL); i++)
+            registroImprime(&tmp);
+        printf("\n==================================\n");
+        fseek(arq, 0, SEEK_SET);
     }
 
     estatisticasIniciaTempoPre(est);
@@ -200,8 +210,27 @@ void metodoFMaisUmCaminhos(FILE *arq, int quantidade, Estatisticas *est) {
 
     estatisticasParaTempoOrd(est);
 
-    /* Descomente abaixo caso queira gravar em um arquivo texto de saida ou imprimir */
-    /* fitaImprime(&fitas[fitaFinal]); */
+
+    if(imprimir) {
+        printf("\n===== Dados depois de ordenar =====\n\n");
+        fitaImprime(&fitas[fitaFinal]);
+        printf("\n==================================\n");
+    }
+
+    //gera o arquivo com os dados ordenados
+    Registro r;
+    FILE *arq2 = fopen("ordenado_f+1.txt", "wb");
+    if(arq2 == NULL) {
+        printf("\nFalha ao criar arquivo ordenado!\n");
+    }
+    else {
+        fitaRebobina(&fitas[fitaFinal]);
+        while (fitaLe(&fitas[fitaFinal], &r, NULL)) {
+            registroEscreveTexto(arq2, &r, NULL);
+        }
+        fclose(arq2);
+    }
+
     (void)fitaFinal;
 
     for (int i = 0; i < NUM_FITAS_F1; i++) {
