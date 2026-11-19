@@ -5,21 +5,36 @@ void estatisticasInicia(Estatisticas *est) {
     est->leituras = 0;
     est->escritas = 0;
     est->comparacoes = 0;
-    est->inicio.tv_sec = est->inicio.tv_nsec = 0;
-    est->fim.tv_sec = est->fim.tv_nsec = 0;
+    est->inicioPre.tv_sec = est->inicioPre.tv_nsec = 0;
+    est->fimPre.tv_sec = est->fimPre.tv_nsec = 0;
+    est->inicioOrd.tv_sec = est->inicioOrd.tv_nsec = 0;
+    est->fimOrd.tv_sec = est->fimOrd.tv_nsec = 0;
 }
 
-void estatisticasIniciaTempo(Estatisticas *est) {
-    clock_gettime(CLOCK_MONOTONIC, &est->inicio);
+void estatisticasIniciaTempoPre(Estatisticas *est) {
+    clock_gettime(CLOCK_MONOTONIC, &est->inicioPre);
 }
 
-void estatisticasParaTempo(Estatisticas *est) {
-    clock_gettime(CLOCK_MONOTONIC, &est->fim);
+void estatisticasIniciaTempoOrd(Estatisticas *est) {
+    clock_gettime(CLOCK_MONOTONIC, &est->inicioOrd);
 }
 
-double estatisticasTempo(const Estatisticas *est) {
-    return (double)(est->fim.tv_sec - est->inicio.tv_sec)
-         + (double)(est->fim.tv_nsec - est->inicio.tv_nsec) / 1e9;
+void estatisticasParaTempoPre(Estatisticas *est) {
+    clock_gettime(CLOCK_MONOTONIC, &est->fimPre);
+}
+
+void estatisticasParaTempoOrd(Estatisticas *est) {
+    clock_gettime(CLOCK_MONOTONIC, &est->fimOrd);
+}
+
+double estatisticasTempoPre(const Estatisticas *est) {
+    return (double)(est->fimPre.tv_sec - est->inicioPre.tv_sec)
+         + (double)(est->fimPre.tv_nsec - est->inicioPre.tv_nsec) / 1e9;
+}
+
+double estatisticasTempoOrd(const Estatisticas *est) {
+    return (double)(est->fimOrd.tv_sec - est->inicioOrd.tv_sec)
+         + (double)(est->fimOrd.tv_nsec - est->inicioOrd.tv_nsec) / 1e9;
 }
 
 void estatisticasImprime(const Estatisticas *est) {
@@ -27,5 +42,6 @@ void estatisticasImprime(const Estatisticas *est) {
     printf("Leituras (externa -> interna) : %ld\n", est->leituras);
     printf("Escritas (interna -> externa) : %ld\n", est->escritas);
     printf("Comparacoes entre chaves      : %ld\n", est->comparacoes);
-    printf("Tempo de execucao             : %.6f s\n", estatisticasTempo(est));
+    printf("Tempo de pre-processamento    : %.6f s\n", estatisticasTempoPre(est));
+    printf("Tempo de ordenaçao            : %.6f s\n", estatisticasTempoOrd(est));
 }

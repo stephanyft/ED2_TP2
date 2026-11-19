@@ -16,16 +16,21 @@ typedef struct {
     long leituras;       /* registros transferidos da memoria externa para a interna */
     long escritas;       /* registros transferidos da memoria interna para a externa */
     long comparacoes;    /* comparacoes entre chaves (notas) */
-    struct timespec inicio;
-    struct timespec fim;
+    struct timespec inicioPre;
+    struct timespec fimPre;
+    struct timespec inicioOrd;
+    struct timespec fimOrd;
 } Estatisticas;
 
 /* Zera os contadores. */
 void estatisticasInicia(Estatisticas *est);
 
 /* Marca o instante de inicio / fim da execucao. */
-void estatisticasIniciaTempo(Estatisticas *est);
-void estatisticasParaTempo(Estatisticas *est);
+void estatisticasIniciaTempoPre(Estatisticas *est);
+void estatisticasParaTempoPre(Estatisticas *est);
+
+void estatisticasIniciaTempoOrd(Estatisticas *est);
+void estatisticasParaTempoOrd(Estatisticas *est);
 
 /* Tempo decorrido entre inicio e fim, em segundos. */
 double estatisticasTempo(const Estatisticas *est);
