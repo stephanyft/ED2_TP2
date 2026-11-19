@@ -271,7 +271,7 @@ int metodoQuicksortExterno(FILE* txt, int n, int imprimir, Estatisticas* est){
         fseek(txt, 0, SEEK_SET);
     }
 
-    estatisticasIniciaTempo(est);
+    estatisticasIniciaTempoPre(est);
 
     /* Etapa 1: texto -> binário (conta leitura do texto e escrita no binário) */
     for (k = 0; k < n && ok; k++){
@@ -283,10 +283,14 @@ int metodoQuicksortExterno(FILE* txt, int n, int imprimir, Estatisticas* est){
         }
     }
 
+    estatisticasParaTempoPre(est);
+
     /* Etapa 2: ordenação */
     if (ok){
+        estatisticasIniciaTempoOrd(est);
         quicksort(bin, n, est);
         fflush(bin);
+        estatisticasParaTempoOrd(est);
     }
 
     /* Etapa 3: binário ordenado -> arquivo texto de saída */
