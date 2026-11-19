@@ -6,6 +6,7 @@
 #include <string.h>
 #include "registro.h"
 #include "quicksort.h"
+#include "metodof+1.h"
 
 int main(int argc, char *argv[]) {
     if(argc < 4 || argc > 5){
@@ -62,7 +63,7 @@ int main(int argc, char *argv[]) {
             metodoDoisFCaminhos(arq, quantidade, imprimir, &est);
             break;
         case 2:
-            printf("Metodo 2 ainda nao implemtnado\n");
+            metodoFMaisUmCaminhos(arq, quantidade, imprimir, &est);
             break;
         case 3: 
             metodoQuicksortExterno(arq, quantidade, imprimir, &est);
