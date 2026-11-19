@@ -29,11 +29,13 @@ int metodoDoisFCaminhos(FILE *arq, int n, int imprimir, Estatisticas *est) {
     }
     
     //inicia o metodo 2f caminhos
-    estatisticasIniciaTempo(est);
+    estatisticasIniciaTempoPre(est);
     ordenaBlocosIniciais(arq, n, f, est);
+    estatisticasParaTempoPre(est);
 
+    estatisticasIniciaTempoOrd(est);
     int num = intercalaFitas(f, est);
-    estatisticasParaTempo(est);
+    estatisticasParaTempoOrd(est);
     
     if (num < 0) {
         return 0;

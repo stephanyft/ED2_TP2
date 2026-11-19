@@ -186,21 +186,23 @@ void metodoFMaisUmCaminhos(FILE *arq, int quantidade, Estatisticas *est) {
         fitaAbre(&fitas[i], i + 1);
     }
 
-    estatisticasIniciaTempo(est);
+    estatisticasIniciaTempoPre(est);
 
     /* 1. Geracao dos blocos ordenados iniciais */
     gerarBlocosFMaisUm(arq, fitas, quantidade, est);
 
+    estatisticasParaTempoPre(est);
+
+    estatisticasIniciaTempoOrd(est);
+
     /* 2. Intercalacao balanceada f+1 caminhos */
     int fitaFinal = intercalarFMaisUm(fitas, est);
 
-    estatisticasParaTempo(est);
+    estatisticasParaTempoOrd(est);
 
     /* Descomente abaixo caso queira gravar em um arquivo texto de saida ou imprimir */
     /* fitaImprime(&fitas[fitaFinal]); */
     (void)fitaFinal;
-
-    estatisticasImprime(est);
 
     for (int i = 0; i < NUM_FITAS_F1; i++) {
         fitaFecha(&fitas[i]);
