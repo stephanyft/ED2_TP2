@@ -2,13 +2,14 @@
 #include <stdlib.h>
 #include "../includes/metodof+1.h"
 
+// Gera os blocos iniciais ordenados via selecao por substituicao
 void gerarBlocosFMaisUm(FILE *arq, Fita *fitas, int quantidade, Estatisticas *est) {
     Heap h;
     int tamHeap = 0;
     int lidosTotal = 0;
     Registro r;
 
-    /* 1. Preenche a memoria inicial (ate 19 registros) */
+    // Carrega os primeiros registros na memoria (maximo 19)
     while (tamHeap < MEMORIA_F1 && lidosTotal < quantidade && registroLeTexto(arq, &r, est)) {
         h.v[tamHeap].reg = r;
         h.v[tamHeap].marcado = false;
@@ -26,9 +27,8 @@ void gerarBlocosFMaisUm(FILE *arq, Fita *fitas, int quantidade, Estatisticas *es
     int fitaAtual = 0;
     fitaIniciaBloco(&fitas[fitaAtual]);
 
-    /* 2. Processa os registros mantendo o heap de substituicao */
     while (tamHeap > 0) {
-        /* Se todos os elementos no heap estao marcados, encerra o bloco atual e inicia um novo na proxima fita */
+        // Todos marcados -> fecha o bloco atual e passa para a proxima fita
         if (fimBloco(&h, tamHeap)) {
             fitaFinalizaBloco(&fitas[fitaAtual]);
             fitaAtual = (fitaAtual + 1) % F_ENTRADA_F1;
@@ -36,16 +36,14 @@ void gerarBlocosFMaisUm(FILE *arq, Fita *fitas, int quantidade, Estatisticas *es
             novoBloco(&h, tamHeap, est);
         }
 
-        /* Retira o menor registro nao marcado (raiz do heap) e grava na fita */
         Registro ultimo = h.v[0].reg;
         fitaEscreve(&fitas[fitaAtual], &ultimo, est);
 
-        /* Tenta ler o proximo registro do arquivo de entrada para substituir a raiz */
+        // Le o proximo registro para substituir a raiz ou reduz o heap no fim da entrada
         if (lidosTotal < quantidade && registroLeTexto(arq, &r, est)) {
             lidosTotal++;
             substituiRaiz(&h, r, ultimo, tamHeap, est);
         } else {
-            /* Arquivo de entrada acabou: reduz o heap movendo o ultimo elemento para a raiz */
             tamHeap--;
             if (tamHeap > 0) {
                 h.v[0] = h.v[tamHeap];
@@ -57,7 +55,7 @@ void gerarBlocosFMaisUm(FILE *arq, Fita *fitas, int quantidade, Estatisticas *es
     fitaFinalizaBloco(&fitas[fitaAtual]);
 }
 
-
+// Copia os blocos da fita de saida de volta para as 19 fitas de entrada
 void redistribuirFMaisUm(Fita *fitaSaida, Fita *fitasEntrada, Estatisticas *est) {
     for (int i = 0; i < F_ENTRADA_F1; i++) {
         fitaReinicia(&fitasEntrada[i]);
@@ -81,9 +79,9 @@ void redistribuirFMaisUm(Fita *fitaSaida, Fita *fitasEntrada, Estatisticas *est)
     fitaReinicia(fitaSaida);
 }
 
-
+// Intercala as 19 fitas na fita de saida ate sobrar 1 bloco; retorna o indice da fita final
 int intercalarFMaisUm(Fita *fitas, Estatisticas *est) {
-    int fitaSaidaIdx = F_ENTRADA_F1; /* Fita 19 eh a fita de saida */
+    int fitaSaidaIdx = F_ENTRADA_F1;
 
     while (1) {
         long totalBlocos = 0;
@@ -97,23 +95,20 @@ int intercalarFMaisUm(Fita *fitas, Estatisticas *est) {
             }
         }
 
-        /* Condicao de parada: resta no maximo 1 bloco ordenado em todas as fitas */
         if (totalBlocos <= 1) {
             return ultimaFitaComBloco;
         }
 
-        /* Rebobina todas as fitas de entrada e limpa a fita de saida */
         for (int i = 0; i < F_ENTRADA_F1; i++) {
             fitaRebobina(&fitas[i]);
         }
         fitaReinicia(&fitas[fitaSaidaIdx]);
 
-        /* Enquanto houver blocos ativos em pelo menos uma fita de entrada, faz um merge */
+        // Intercala uma leva de blocos por vez ate esgotar todas as fitas de entrada
         while (1) {
             Heap h;
             int tamHeap = 0;
 
-            /* Pega o primeiro registro do bloco atual de cada fita de entrada ativa */
             for (int i = 0; i < F_ENTRADA_F1; i++) {
                 if (fitaTemBloco(&fitas[i])) {
                     Registro r;
@@ -126,7 +121,6 @@ int intercalarFMaisUm(Fita *fitas, Estatisticas *est) {
                 }
             }
 
-            /* Se nenhuma fita tinha bloco para ler, encerrou esta passada de intercalacao */
             if (tamHeap == 0) {
                 break;
             }
@@ -134,7 +128,6 @@ int intercalarFMaisUm(Fita *fitas, Estatisticas *est) {
             constroiHeap(&h, tamHeap, est);
             fitaIniciaBloco(&fitas[fitaSaidaIdx]);
 
-            /* Intercala os blocos atuais usando o Heap */
             while (tamHeap > 0) {
                 ItemHeap menorItem = h.v[0];
                 fitaEscreve(&fitas[fitaSaidaIdx], &menorItem.reg, est);
@@ -142,14 +135,13 @@ int intercalarFMaisUm(Fita *fitas, Estatisticas *est) {
                 int origem = menorItem.fitaOrigem;
                 Registro prox;
 
-                /* Le o proximo registro do MESMO bloco da fita de origem */
+                // Tenta puxar o proximo item do mesmo bloco; se acabou, remove a fita do heap
                 if (fitaLe(&fitas[origem], &prox, est)) {
                     h.v[0].reg = prox;
                     h.v[0].marcado = false;
                     h.v[0].fitaOrigem = origem;
                     reconstroiHeap(&h, 0, tamHeap, est);
                 } else {
-                    /* Bloco daquela fita acabou: avanca cursor da fita para o proximo bloco e reduz o heap */
                     fitaProximoBloco(&fitas[origem]);
                     tamHeap--;
                     if (tamHeap > 0) {
@@ -162,15 +154,11 @@ int intercalarFMaisUm(Fita *fitas, Estatisticas *est) {
             fitaFinalizaBloco(&fitas[fitaSaidaIdx]);
         }
 
-        /*
-         * Se a fita de saida (19) ficou com apenas 1 bloco, o arquivo ja esta 100% ordenado nela!
-         * Evitamos uma redistribuicao desnecessaria.
-         */
+        // Se sobrou so 1 bloco na fita de saida, ja terminou e nao precisa redistribuir
         if (fitaNumBlocos(&fitas[fitaSaidaIdx]) <= 1) {
             return fitaSaidaIdx;
         }
 
-        /* Caso contrario, redistribui os blocos da fita 19 de volta para as fitas 0..18 */
         redistribuirFMaisUm(&fitas[fitaSaidaIdx], fitas, est);
     }
 }
@@ -196,34 +184,28 @@ void metodoFMaisUmCaminhos(FILE *arq, int quantidade, int imprimir, Estatisticas
         fseek(arq, 0, SEEK_SET);
     }
 
+    // Fase 1: geracao dos blocos
     estatisticasIniciaTempoPre(est);
-
-    /* 1. Geracao dos blocos ordenados iniciais */
     gerarBlocosFMaisUm(arq, fitas, quantidade, est);
-
     estatisticasParaTempoPre(est);
 
+    // Fase 2: intercalacao
     estatisticasIniciaTempoOrd(est);
-
-    /* 2. Intercalacao balanceada f+1 caminhos */
     int fitaFinal = intercalarFMaisUm(fitas, est);
-
     estatisticasParaTempoOrd(est);
 
-
-    if(imprimir) {
+    if (imprimir) {
         printf("\n===== Dados depois de ordenar =====\n\n");
         fitaImprime(&fitas[fitaFinal]);
         printf("\n==================================\n");
     }
 
-    //gera o arquivo com os dados ordenados
+    // Grava o resultado final em texto sem contabilizar nas estatisticas
     Registro r;
     FILE *arq2 = fopen("ordenado_f+1.txt", "wb");
-    if(arq2 == NULL) {
+    if (arq2 == NULL) {
         printf("\nFalha ao criar arquivo ordenado!\n");
-    }
-    else {
+    } else {
         fitaRebobina(&fitas[fitaFinal]);
         while (fitaLe(&fitas[fitaFinal], &r, NULL)) {
             registroEscreveTexto(arq2, &r, NULL);
